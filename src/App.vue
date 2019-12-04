@@ -20,7 +20,6 @@ export default {
         outline: none;
         box-sizing: border-box;
         font-family: sans-serif;
-        font-size: 20px;
     }
 
     body {

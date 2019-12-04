@@ -1,13 +1,21 @@
 <template>
-    <div class="my-select">
-
+    <div
+        class="my-select"
+        :class="{ focus: onFocus }"
+    >
         <input
-            class="button"
+            :id="id"
             readonly
+            @focus="onFocus = true"
             @blur="inputBlur"
             @click="isOpen = !isOpen"
             @keydown="inputKeyDown"
         />
+
+        <label
+            :for="id"
+            :class="{ hold: selectedIndex == -1 }"
+        >{{ label }}</label>
 
         <div
             class="options"
@@ -19,6 +27,8 @@
                 v-for="(option, index) in list"
                 :key="index"
                 @mouseup="select(index)"
+                @mousemove="targetIndex = index"
+                :class="{ hover: targetIndex == index }"
             >{{ option }}
             </div>
         </div>
@@ -31,16 +41,25 @@ export default {
     name: 'MySelect',
 
     data: () => ({
-        list: {
-            10: 'Вариант №1',
-            11: 'Вариант №2',
-            12: 'Вариант №3',
-        },
+        list: [
+            'Вариант №1',
+            'Вариант №2',
+            'Вариант №3',
+        ],
+        label: 'Вариант',
 
+        onFocus: false,
         isOpen: false,
         isBlurPrevented: false,
-        selectedIndex: null,
+        selectedIndex: -1,
+        targetIndex: -1,
     }),
+
+    computed: {
+        id() {
+            return 'input-' + this._uid;
+        },
+    },
 
     methods: {
         inputBlur({ target }) {
@@ -49,14 +68,19 @@ export default {
 
                 target.focus();
             } else {
+                this.onFocus = false;
                 this.isOpen = false;
+                this.targetIndex = this.selectedIndex;
             }
         },
 
         inputKeyDown({ code }) {
             switch (code) {
+            case 'Tab':
+                break;
             case 'Escape':
                 this.isOpen = false;
+                this.targetIndex = this.selectedIndex;
 
                 break;
             case 'Space':
@@ -64,10 +88,19 @@ export default {
 
                 break;
             case 'Enter':
+                this.isOpen = false;
+                this.selectedIndex = this.targetIndex;
+
                 break;
             case 'ArrowDown':
+                if (++this.targetIndex >= this.list.length)
+                    this.targetIndex = 0;
+
                 break;
             case 'ArrowUp':
+                if (--this.targetIndex < 0)
+                    this.targetIndex = this.list.length - 1;
+
                 break;
             }
         },
@@ -91,9 +124,16 @@ export default {
         position: relative;
         cursor: pointer;
         background-color: #fff;
+        font-size: 20px;
+
+        &.focus {
+            input, label {
+                color: #f99;
+            }
+        }
     }
 
-    .button {
+    input {
         width: 100%;
         height: 100%;
         background-color: inherit;
@@ -101,9 +141,21 @@ export default {
         border: solid 2px;
         cursor: inherit;
         border-radius: 7px;
+    }
 
-        &:focus {
-            color: #f99;
+    label {
+        position: absolute;
+        color: #a9a9a9;
+        left: 6px;
+        top: -8px;
+        padding: 0 4px;
+        background-color: #fff;
+        font-size: 16px;
+        transition: .2s;
+
+        &.hold {
+            top: 20px;
+            font-size: 26px;
         }
     }
 
@@ -120,7 +172,7 @@ export default {
     .option {
         padding: 5px 10px;
 
-        &:hover {
+        &.hover {
             color: #fff;
             background-color: #f99;
         }
