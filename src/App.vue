@@ -1,28 +1,37 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <MySelect/>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import MySelect from './components/MySelect';
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
-}
+    name: 'app',
+    components: {
+        MySelect,
+    },
+};
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+    * {
+        outline: none;
+        box-sizing: border-box;
+        font-family: sans-serif;
+        font-size: 20px;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    #app {
+        width: 100vw;
+        height: 30vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
