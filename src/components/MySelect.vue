@@ -18,6 +18,11 @@
         >{{ label }}</label>
 
         <div
+            class="value"
+            v-if="selectedIndex != -1"
+        >{{ list[selectedIndex] }}</div>
+
+        <div
             class="options"
             v-if="isOpen"
             @mousedown="optionsMouseDown"
@@ -157,6 +162,15 @@ export default {
             top: 20px;
             font-size: 26px;
         }
+    }
+
+    .value {
+        position: absolute;
+        left: 10px;
+        top: 20px;
+        font-size: 26px;
+        transition: .2s;
+        pointer-events: none;
     }
 
     .options {
