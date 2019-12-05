@@ -37,7 +37,6 @@
             >{{ option }}
             </div>
         </div>
-
     </div>
 </template>
 
@@ -62,16 +61,16 @@ export default {
 
     computed: {
         id() {
-            return 'input-' + this._uid;
+            return 'input-' + this['_uid'];
         },
     },
 
     methods: {
-        inputBlur({ target }) {
+        inputBlur(e) {
             if (this.isBlurPrevented) {
                 this.isBlurPrevented = false;
 
-                target.focus();
+                e.target.focus();
             } else {
                 this.onFocus = false;
                 this.isOpen = false;
@@ -79,9 +78,13 @@ export default {
             }
         },
 
-        inputKeyDown({ code }) {
-            switch (code) {
+        inputKeyDown(e) {
+            switch (e.code) {
             case 'Tab':
+                if (this.isOpen) {
+                    e.preventDefault();
+                }
+
                 break;
             case 'Escape':
                 this.isOpen = false;
@@ -97,14 +100,27 @@ export default {
                 this.selectedIndex = this.targetIndex;
 
                 break;
+
+            // Логика обработчиков стрелок похожа.
+            // TODO Было бы здорово вынести в функцию.
             case 'ArrowDown':
                 if (++this.targetIndex >= this.list.length)
                     this.targetIndex = 0;
+
+                if (!this.isOpen) {
+                    if (++this.selectedIndex >= this.list.length)
+                        this.selectedIndex = 0;
+                }
 
                 break;
             case 'ArrowUp':
                 if (--this.targetIndex < 0)
                     this.targetIndex = this.list.length - 1;
+
+                if (!this.isOpen) {
+                    if (--this.selectedIndex < 0)
+                        this.selectedIndex = this.list.length - 1;
+                }
 
                 break;
             }
