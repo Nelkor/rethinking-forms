@@ -14,13 +14,13 @@
 
         <label
             :for="id"
-            :class="{ hold: selectedIndex == -1 }"
+            :class="{ hold: currentIndex === null }"
         >{{ label }}</label>
 
         <div
             class="value"
-            v-if="selectedIndex != -1"
-        >{{ list[selectedIndex] }}</div>
+            v-if="currentIndex !== null"
+        >{{ list[currentIndex] }}</div>
 
         <div
             class="options"
@@ -43,28 +43,27 @@
 <script>
 export default {
     name: 'MySelect',
-
+    props: {
+        list: Array,
+        label: String,
+        currentIndex: Number,
+    },
     data: () => ({
-        list: [
-            'Вариант №1',
-            'Вариант №2',
-            'Вариант №3',
-        ],
-        label: 'Вариант',
-
         onFocus: false,
         isOpen: false,
         isBlurPrevented: false,
-        selectedIndex: -1,
-        targetIndex: -1,
+        // TODO сделать обработку null как -1
+        targetIndex: null,
     }),
-
+    model: {
+        prop: 'currentIndex',
+        event: 'change',
+    },
     computed: {
         id() {
             return 'input-' + this['_uid'];
         },
     },
-
     methods: {
         inputBlur(e) {
             if (this.isBlurPrevented) {
@@ -74,10 +73,9 @@ export default {
             } else {
                 this.onFocus = false;
                 this.isOpen = false;
-                this.targetIndex = this.selectedIndex;
+                this.targetIndex = this.currentIndex;
             }
         },
-
         inputKeyDown(e) {
             switch (e.code) {
             case 'Tab':
@@ -88,7 +86,7 @@ export default {
                 break;
             case 'Escape':
                 this.isOpen = false;
-                this.targetIndex = this.selectedIndex;
+                this.targetIndex = this.currentIndex;
 
                 break;
             case 'Space':
@@ -97,41 +95,32 @@ export default {
                 break;
             case 'Enter':
                 this.isOpen = false;
-                this.selectedIndex = this.targetIndex;
+                this.$emit('change', this.targetIndex);
 
                 break;
-
-            // Логика обработчиков стрелок похожа.
-            // TODO Было бы здорово вынести в функцию.
             case 'ArrowDown':
-                if (++this.targetIndex >= this.list.length)
-                    this.targetIndex = 0;
+                const needReset = this.targetIndex === null
+                    || (++this.targetIndex >= this.list.length);
 
-                if (!this.isOpen) {
-                    if (++this.selectedIndex >= this.list.length)
-                        this.selectedIndex = 0;
-                }
+                if (needReset) this.targetIndex = 0;
+
+                if (!this.isOpen) this.$emit('change', this.targetIndex);
 
                 break;
             case 'ArrowUp':
                 if (--this.targetIndex < 0)
                     this.targetIndex = this.list.length - 1;
 
-                if (!this.isOpen) {
-                    if (--this.selectedIndex < 0)
-                        this.selectedIndex = this.list.length - 1;
-                }
+                if (!this.isOpen) this.$emit('change', this.targetIndex);
 
                 break;
             }
         },
-
         optionsMouseDown() {
             this.isBlurPrevented = true;
         },
-
         select(index) {
-            this.selectedIndex = index;
+            this.$emit('change', index);
             this.isOpen = false;
         },
     },

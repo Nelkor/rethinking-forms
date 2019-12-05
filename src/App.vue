@@ -1,6 +1,10 @@
 <template>
     <div id="app">
-        <MySelect/>
+        <MySelect
+            label="Роль"
+            :list="roles"
+            v-model="currentRole"
+        />
     </div>
 </template>
 
@@ -9,6 +13,16 @@ import MySelect from './components/MySelect';
 
 export default {
     name: 'app',
+    data: () => ({
+        roles: [
+            'Лёгкая',
+            'Центр',
+            'Сложная',
+            'Поддержка',
+            'Полная поддержка',
+        ],
+        currentRole: null,
+    }),
     components: {
         MySelect,
     },
