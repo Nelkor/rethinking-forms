@@ -5,6 +5,7 @@
     >
         <input
             :id="id"
+            ref="input"
             readonly
             @focus="onFocus = true"
             @blur="inputBlur"
@@ -14,12 +15,12 @@
 
         <label
             :for="id"
-            :class="{ hold: currentIndex === null }"
+            :class="{ hold: currentIndex == null }"
         >{{ label }}</label>
 
         <div
             class="value"
-            :class="{ visible: currentIndex !== null }"
+            :class="{ visible: currentIndex != null }"
         >{{ list[currentIndex] }}</div>
 
         <div
@@ -30,7 +31,7 @@
         <div
             class="options"
             v-if="isOpen"
-            @mousedown="optionsMouseDown"
+            @mousedown.prevent="$refs.input.focus()"
         >
             <div
                 class="option"
@@ -56,7 +57,6 @@ export default {
     data: () => ({
         onFocus: false,
         isOpen: false,
-        isBlurPrevented: false,
         targetIndex: null,
     }),
     model: {
@@ -69,16 +69,10 @@ export default {
         },
     },
     methods: {
-        inputBlur(e) {
-            if (this.isBlurPrevented) {
-                this.isBlurPrevented = false;
-
-                e.target.focus();
-            } else {
-                this.onFocus = false;
-                this.isOpen = false;
-                this.targetIndex = this.currentIndex;
-            }
+        inputBlur() {
+            this.onFocus = false;
+            this.isOpen = false;
+            this.targetIndex = this.currentIndex;
         },
         enter() {
             this.isOpen = false;
@@ -108,7 +102,7 @@ export default {
 
                 break;
             case 'ArrowDown':
-                const needReset = this.targetIndex === null
+                const needReset = this.targetIndex == null
                     || (++this.targetIndex >= this.list.length);
 
                 if (needReset) this.targetIndex = 0;
@@ -124,9 +118,6 @@ export default {
 
                 break;
             }
-        },
-        optionsMouseDown() {
-            this.isBlurPrevented = true;
         },
         select(index) {
             this.$emit('change', index);
