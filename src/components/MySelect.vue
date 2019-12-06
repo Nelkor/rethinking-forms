@@ -19,8 +19,13 @@
 
         <div
             class="value"
-            v-if="currentIndex !== null"
+            :class="{ visible: currentIndex !== null }"
         >{{ list[currentIndex] }}</div>
+
+        <div
+            class="angle"
+            :class="{ active: isOpen }"
+        ></div>
 
         <div
             class="options"
@@ -52,7 +57,6 @@ export default {
         onFocus: false,
         isOpen: false,
         isBlurPrevented: false,
-        // TODO сделать обработку null как -1
         targetIndex: null,
     }),
     model: {
@@ -76,11 +80,17 @@ export default {
                 this.targetIndex = this.currentIndex;
             }
         },
+        enter() {
+            this.isOpen = false;
+            this.$emit('change', this.targetIndex);
+        },
         inputKeyDown(e) {
             switch (e.code) {
             case 'Tab':
                 if (this.isOpen) {
                     e.preventDefault();
+
+                    this.enter();
                 }
 
                 break;
@@ -94,8 +104,7 @@ export default {
 
                 break;
             case 'Enter':
-                this.isOpen = false;
-                this.$emit('change', this.targetIndex);
+                this.enter();
 
                 break;
             case 'ArrowDown':
@@ -156,7 +165,7 @@ export default {
     label {
         position: absolute;
         color: #a9a9a9;
-        left: 6px;
+        left: 8px;
         top: -8px;
         padding: 0 4px;
         background-color: #fff;
@@ -171,11 +180,35 @@ export default {
 
     .value {
         position: absolute;
-        left: 10px;
+        left: 12px;
         top: 20px;
         font-size: 26px;
-        transition: .2s;
+        transition: .6s;
         pointer-events: none;
+        opacity: 0;
+        width: 350px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &.visible {
+            opacity: 1;
+        }
+    }
+
+    .angle {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        right: 16px;
+        top: 25px;
+        transition: .2s;
+        background: center/cover url(../assets/drop.svg);
+        pointer-events: none;
+
+        &.active {
+            transform: rotate(90deg);
+        }
     }
 
     .options {
