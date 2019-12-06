@@ -2,7 +2,6 @@
     <div class="model-tab">
         <input
             readonly
-            ref="input"
             @keydown="onKeyDown"
         >
 
@@ -12,7 +11,7 @@
                 v-for="(name, index) in tabs"
                 :key="index"
                 :class="{ active: index == current }"
-                @mousedown.prevent="$refs.input.focus()"
+                @mousedown.prevent
                 @click="$emit('change', index)"
             >{{ name }}
             </div>

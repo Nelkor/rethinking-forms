@@ -5,7 +5,6 @@
     >
         <input
             :id="id"
-            ref="input"
             readonly
             @focus="onFocus = true"
             @blur="inputBlur"
@@ -31,7 +30,7 @@
         <div
             class="options"
             v-if="isOpen"
-            @mousedown.prevent="$refs.input.focus()"
+            @mousedown.prevent
         >
             <div
                 class="option"
