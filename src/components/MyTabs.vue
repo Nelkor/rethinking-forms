@@ -13,8 +13,7 @@
                 :class="{ active: index == current }"
                 @mousedown.prevent
                 @click="$emit('change', index)"
-            >{{ name }}
-            </div>
+            >{{ name }}</div>
         </div>
     </div>
 </template>
